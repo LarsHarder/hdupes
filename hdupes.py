@@ -16,11 +16,12 @@ import filecmp
 
 # maybe do something better later...
 def fingerPrintOfFile(fileName):
-    f = open(filename, 'r')
+    f = open(fileName, 'r')
     # read first 16 bytes and 16 bytes starting at 1024
     part1 = f.read(16)
     f.seek(1024)
     part2 = f.read(16)
+    f.close()
     return part1 + part2
 
 def compareFileShell(fileName1, fileName2):
@@ -42,21 +43,23 @@ class HFile:
     sizeOfFile = -1
     duplicates = []
     savedFingerprint = ''
+
     def __init__(self, fileName, fileSize):
         self.nameOfFile = fileName
         self.sizeOfFile = fileSize
         self.duplicates = []
+        self.savedFingerprint = ''
 
 
     def fingerprint(self):
-        if len(savedFingerprint) > 0:
-            return savedFingerprint
+        if len(self.savedFingerprint) > 0:
+            return self.savedFingerprint
         else:
             if self.sizeOfFile > MINSIZEFORFINGERPRINT:
-                savedFingerprint = fingerPrintOfFile(self.nameOfFile)
+                self.savedFingerprint = fingerPrintOfFile(self.nameOfFile)
             else:
-                savedFingerprint = "no print"
-            return savedFingerprint
+                self.savedFingerprint = "no print"
+            return self.savedFingerprint
 
     def filename(self):
         return self.nameOfFile
@@ -118,10 +121,11 @@ def findDuplicates(listOfFiles):
         candidate = listOfFiles.pop(0)
         dupesToCandidate = []
         for secondFile in listOfFiles:
-            if compareFile(candidate.filename(), secondFile.filename()):
-                #print "      IDENTICAL"
-                candidate.addDuplicate(secondFile)
-                dupesToCandidate.append(secondFile)
+            if candidate.fingerprint() == secondFile.fingerprint():
+                if compareFile(candidate.filename(), secondFile.filename()):
+                    #print "      IDENTICAL"
+                    candidate.addDuplicate(secondFile)
+                    dupesToCandidate.append(secondFile)
         for f in dupesToCandidate:
             listOfFiles.remove(f)
         if len(candidate.duplicates) > 0 :
