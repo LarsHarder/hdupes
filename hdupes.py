@@ -24,19 +24,8 @@ def fingerPrintOfFile(fileName):
     f.close()
     return part1 + part2
 
-def compareFileShell(fileName1, fileName2):
-    print "SHELLSHELLSHELL"
-    result = os.system('cmp  "'+ fileName1 + '" "' + fileName2 + '"')
-    #result = os.system('cmp -s '+ fileName1 + ' ' + fileName2)
-    print result
-    if result == 0:
-        return True
-    else:
-        return False
-
 def compareFile(fileName1, fileName2):
     return filecmp.cmp(fileName1, fileName2, shallow=False)
-
 
 class HFile:
     nameOfFile = ''
@@ -49,7 +38,6 @@ class HFile:
         self.sizeOfFile = fileSize
         self.duplicates = []
         self.savedFingerprint = ''
-
 
     def fingerprint(self):
         if len(self.savedFingerprint) > 0:
@@ -78,7 +66,6 @@ class HFile:
 # used for sorting a list of HFiles
 def getFileSize(HFile):
     return HFile.sizeOfFile
-
 
 def do_the_walk(startPath):
     foundFiles = []
@@ -132,7 +119,6 @@ def findDuplicates(listOfFiles):
             duplicates.append(candidate)
     return duplicates
 
-
 def printResults(listOfDuplicates):
     for original in listOfDuplicates:
         print "  +  " + original.filename()
@@ -164,6 +150,5 @@ def main():
     for dup in allDuplicates:
         wastedSpace = wastedSpace + dup.size() * len(dup.duplicates)
     print 'Space Wasted: ' + str(wastedSpace) + ' of total size: ' + str(totalSize) + '    ' + str(int(wastedSpace*100/totalSize)) + ' %'
-
 
 main()
