@@ -122,6 +122,16 @@ def findDuplicates(listOfFiles):
             duplicates.append(candidate)
     return duplicates
 
+def summary(allDuplicates):
+    wastedSpace = 0
+    setsOfDuplicates = 0
+    nrOfDuplicateFiles = 0
+    for dup in allDuplicates:
+        setsOfDuplicates = setsOfDuplicates + 1
+        nrOfDuplicateFiles = nrOfDuplicateFiles + 1 + len(dup.duplicates)
+        wastedSpace = wastedSpace + dup.size() * len(dup.duplicates)
+    print str(nrOfDuplicateFiles) + ' duplicate files (in ' + str(setsOfDuplicates) + ' sets), occupying ' + str(wastedSpace) + ' bytes.'
+
 def printResults(listOfDuplicates):
     for original in listOfDuplicates:
         print  original.filename()
@@ -150,9 +160,6 @@ def main():
     for f in allFiles:
         totalSize = totalSize + f.size()
 
-    wastedSpace = 0
-    for dup in allDuplicates:
-        wastedSpace = wastedSpace + dup.size() * len(dup.duplicates)
-    print 'Space Wasted: ' + str(wastedSpace) + ' of total size: ' + str(totalSize) + '    ' + str(int(wastedSpace*100/totalSize)) + ' %'
+    summary(allDuplicates)
 
 main()
