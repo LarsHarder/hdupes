@@ -7,12 +7,14 @@
 # Lars Harder
 #
 # started 20160714
+# edited  20160715
 
 MINSIZEFORFINGERPRINT = 1040        # files smaller than this will not be
                                     # fingerprinted for comparison
 
 import os
 import filecmp
+import sys
 
 # maybe do something better later...
 def fingerPrintOfFile(fileName):
@@ -70,7 +72,8 @@ def getFileSize(HFile):
 def do_the_walk(startPath):
     foundFiles = []
     for (dirpath, dirnames, filenames) in os.walk(os.getcwd()):
-        print 'found: ' + str(len(foundFiles)) + "\033[F"
+        #sys.stderr.write ('found: ' + str(len(foundFiles)) + "\033[F")
+        sys.stderr.write ('\rfound: ' + str(len(foundFiles)))
         if dirpath[-1:] != '/':
             dirpath = dirpath + '/'
         for aFile in filenames:
@@ -121,10 +124,9 @@ def findDuplicates(listOfFiles):
 
 def printResults(listOfDuplicates):
     for original in listOfDuplicates:
-        print "  +  " + original.filename()
+        print  original.filename()
         for duplicate in original.duplicates:
-            print "  -  " + duplicate.filename()
-        print
+            print duplicate.filename()
         print
 
 def main():
@@ -133,14 +135,16 @@ def main():
     allFilesGroupedBySize = listByFileSize(allFiles)
     allDuplicates = []
     doneFiles = 0
-    print 'f'
+
     for filesOfASize in allFilesGroupedBySize:
         newDuplicates = findDuplicates(filesOfASize)
         if len(newDuplicates) > 0:
             allDuplicates = allDuplicates + newDuplicates
         doneFiles = doneFiles + len(filesOfASize)
-        print 'checked: ' + str(doneFiles) + "\033[F"
+        #sys.stderr.write ('checked: ' + str(doneFiles) + "\033[F")
+        sys.stderr.write ('\rchecked: ' + str(doneFiles) + ' of ' + str(len(allFiles)))
 
+    sys.stderr.write ('\r')
     printResults (allDuplicates)
     totalSize = 0
     for f in allFiles:
